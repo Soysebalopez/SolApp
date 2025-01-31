@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, SelectChangeEvent } from 'react';
 import { 
   Dialog, 
   DialogTitle, 
@@ -92,7 +92,7 @@ const AddEventDialog = ({
               <Select
                 value={type}
                 label={t('calendar.eventType' as CalendarTranslation)}
-                onChange={(e) => setType(e.target.value as EventType)}
+                onChange={(e: SelectChangeEvent) => setType(e.target.value as EventType)}
               >
                 <MenuItem value="visit">{t('calendar.eventTypes.visit' as CalendarTranslation)}</MenuItem>
                 <MenuItem value="consultation">{t('calendar.eventTypes.consultation' as CalendarTranslation)}</MenuItem>
@@ -105,7 +105,7 @@ const AddEventDialog = ({
               <Select
                 value={status}
                 label={t('calendar.eventStatus' as CalendarTranslation)}
-                onChange={(e) => setStatus(e.target.value as EventStatus)}
+                onChange={(e: SelectChangeEvent) => setStatus(e.target.value as EventStatus)}
               >
                 <MenuItem value="scheduled">{t('calendar.eventStatuses.scheduled' as CalendarTranslation)}</MenuItem>
                 <MenuItem value="completed">{t('calendar.eventStatuses.completed' as CalendarTranslation)}</MenuItem>
@@ -115,7 +115,7 @@ const AddEventDialog = ({
             <TextField
               label={t('calendar.eventDescription' as CalendarTranslation)}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
               multiline
               rows={4}
               fullWidth

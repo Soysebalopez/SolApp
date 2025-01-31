@@ -1,4 +1,5 @@
 /// <reference types="react" />
+/// <reference types="node" />
 
 import type { 
   FormEvent, 
@@ -64,30 +65,6 @@ declare module '@emotion/react' {
   }
 }
 
-declare module '*.svg' {
-  const content: any;
-  export default content;
-}
-
-declare module '*.png' {
-  const content: any;
-  export default content;
-}
-
-declare module '*.jpg' {
-  const content: any;
-  export default content;
-}
-
-declare module '@mui/material';
-declare module '@emotion/react';
-declare module 'firebase/app';
-
-// Augment the window object
-interface Window {
-  firebase?: any;
-}
-
 declare module '@firebase/app' {
   export * from 'firebase/app';
 }
@@ -113,4 +90,36 @@ declare module '@mui/styles';
 declare module '@date-io/date-fns';
 declare module '@mui/x-date-pickers';
 declare module 'notistack';
-declare module '@hookform/resolvers/yup'; 
+declare module '@hookform/resolvers/yup';
+
+declare module '*.svg' {
+  const content: React.FC<React.SVGProps<SVGSVGElement>>;
+  export default content;
+}
+
+declare module '*.png' {
+  const content: string;
+  export default content;
+}
+
+declare module '*.jpg' {
+  const content: string;
+  export default content;
+}
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: 'development' | 'production' | 'test';
+    NEXT_PUBLIC_FIREBASE_API_KEY: string;
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: string;
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID: string;
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: string;
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: string;
+    NEXT_PUBLIC_FIREBASE_APP_ID: string;
+  }
+}
+
+// Augment the window object
+interface Window {
+  firebase?: any;
+} 

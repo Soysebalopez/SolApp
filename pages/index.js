@@ -1,16 +1,17 @@
-// Página de Bienvenida / Login
-import { useEffect } from 'react';
+// Estilización UX/UI mejorada para todas las páginas
+
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { signInWithPopup, GoogleAuthProvider, getAuth, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase';
+import axios from 'axios';
 
 export default function Home() {
   const router = useRouter();
-
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        router.push('/dashboard'); // Si está autenticado, lo redirige al dashboard
+        router.push('/dashboard');
       }
     });
   }, []);
@@ -19,17 +20,62 @@ export default function Home() {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      router.push('/dashboard'); // Redirige al Dashboard después de iniciar sesión
+      router.push('/dashboard');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-4">Bienvenido a SolApp</h1>
-      <p className="mb-4">Tu asistente de gestión nutricional</p>
-      <button onClick={handleLogin} className="px-4 py-2 bg-blue-500 text-white rounded">Iniciar sesión con Google</button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 md:px-12 lg:px-20">
+      <div className="max-w-lg w-full text-center">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">Bienvenido a SolApp</h1>
+        <p className="text-lg text-gray-600 mb-8">Tu asistente de gestión nutricional</p>
+        <button 
+          onClick={handleLogin} 
+          className="w-full max-w-sm px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium rounded-lg shadow-md transition duration-300">
+          Iniciar sesión con Google
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function Dashboard() {
+  const router = useRouter();
+  const [patients, setPatients] = useState([]);
+  useEffect(() => {
+    fetchPatients();
+  }, []);
+
+  const fetchPatients = async () => {
+    try {
+      const response = await axios.get('https://tuapi.com/pacientes');
+      setPatients(response.data);
+    } catch (error) {
+      console.error('Error al obtener pacientes:', error);
+    }
+  };
+
+  return (
+    <div className="p-6 bg-white min-h-screen flex flex-col items-center">
+      <h2 className="text-3xl font-bold mb-6">Lista de Pacientes</h2>
+      <button 
+        onClick={() => router.push('/nuevo-paciente')} 
+        className="mb-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md">
+        + Agregar Paciente
+      </button>
+      <ul className="w-full max-w-lg list-disc pl-5 text-gray-700">
+        {patients.length > 0 ? (
+          patients.map((patient) => (
+            <li key={patient._id} className="py-2 cursor-pointer text-blue-500 hover:text-blue-700" onClick={() => router.push(`/paciente/${patient._id}`)}>
+              {patient.nombre} - {patient.edad} años
+            </li>
+          ))
+        ) : (
+          <p className="text-gray-500">No hay pacientes registrados.</p>
+        )}
+      </ul>
     </div>
   );
 }

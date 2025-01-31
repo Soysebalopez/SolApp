@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent, SelectChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import { 
   Dialog, 
   DialogTitle, 
@@ -10,7 +10,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  SelectChangeEvent
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import type { EventInput } from '@fullcalendar/core';
@@ -89,10 +90,10 @@ const AddEventDialog = ({
             />
             <FormControl fullWidth>
               <InputLabel>{t('calendar.eventType' as CalendarTranslation)}</InputLabel>
-              <Select
+              <Select<EventType>
                 value={type}
                 label={t('calendar.eventType' as CalendarTranslation)}
-                onChange={(e: SelectChangeEvent) => setType(e.target.value as EventType)}
+                onChange={(e: SelectChangeEvent<EventType>) => setType(e.target.value)}
               >
                 <MenuItem value="visit">{t('calendar.eventTypes.visit' as CalendarTranslation)}</MenuItem>
                 <MenuItem value="consultation">{t('calendar.eventTypes.consultation' as CalendarTranslation)}</MenuItem>
@@ -102,10 +103,10 @@ const AddEventDialog = ({
             </FormControl>
             <FormControl fullWidth>
               <InputLabel>{t('calendar.eventStatus' as CalendarTranslation)}</InputLabel>
-              <Select
+              <Select<EventStatus>
                 value={status}
                 label={t('calendar.eventStatus' as CalendarTranslation)}
-                onChange={(e: SelectChangeEvent) => setStatus(e.target.value as EventStatus)}
+                onChange={(e: SelectChangeEvent<EventStatus>) => setStatus(e.target.value)}
               >
                 <MenuItem value="scheduled">{t('calendar.eventStatuses.scheduled' as CalendarTranslation)}</MenuItem>
                 <MenuItem value="completed">{t('calendar.eventStatuses.completed' as CalendarTranslation)}</MenuItem>

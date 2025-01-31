@@ -78,7 +78,7 @@ const AddEventDialog = ({
             <TextField
               label={t('calendar.eventTitle' as CalendarTranslation)}
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
               required
               fullWidth
             />

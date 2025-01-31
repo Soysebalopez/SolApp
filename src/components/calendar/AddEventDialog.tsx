@@ -19,6 +19,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import type { Patient } from '@/types/patient';
 import type { TranslationKey } from '@/utils/translations';
 import { type CalendarEvent, type EventType, type EventStatus, EVENT_COLORS } from '@/services/calendarService';
+import type { DateTimePickerProps } from '@mui/x-date-pickers/DateTimePicker';
 
 interface AddEventDialogProps {
   open: boolean;
@@ -102,7 +103,7 @@ const AddEventDialog: React.FC<AddEventDialogProps> = ({
             <DateTimePicker
               label={t('calendar.eventDate' as CalendarTranslation)}
               value={start}
-              onChange={setStart}
+              onChange={(newValue: Date | null) => newValue && setStart(newValue)}
             />
             <FormControl fullWidth>
               <InputLabel>{t('calendar.eventType' as CalendarTranslation)}</InputLabel>

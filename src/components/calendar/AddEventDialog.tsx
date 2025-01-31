@@ -90,10 +90,10 @@ const AddEventDialog = ({
             />
             <FormControl fullWidth>
               <InputLabel>{t('calendar.eventType' as CalendarTranslation)}</InputLabel>
-              <Select<EventType>
+              <Select
                 value={type}
                 label={t('calendar.eventType' as CalendarTranslation)}
-                onChange={(e: SelectChangeEvent<EventType>) => setType(e.target.value)}
+                onChange={(e: SelectChangeEvent<string>) => setType(e.target.value as EventType)}
               >
                 <MenuItem value="visit">{t('calendar.eventTypes.visit' as CalendarTranslation)}</MenuItem>
                 <MenuItem value="consultation">{t('calendar.eventTypes.consultation' as CalendarTranslation)}</MenuItem>
@@ -103,10 +103,10 @@ const AddEventDialog = ({
             </FormControl>
             <FormControl fullWidth>
               <InputLabel>{t('calendar.eventStatus' as CalendarTranslation)}</InputLabel>
-              <Select<EventStatus>
+              <Select
                 value={status}
                 label={t('calendar.eventStatus' as CalendarTranslation)}
-                onChange={(e: SelectChangeEvent<EventStatus>) => setStatus(e.target.value)}
+                onChange={(e: SelectChangeEvent<string>) => setStatus(e.target.value as EventStatus)}
               >
                 <MenuItem value="scheduled">{t('calendar.eventStatuses.scheduled' as CalendarTranslation)}</MenuItem>
                 <MenuItem value="completed">{t('calendar.eventStatuses.completed' as CalendarTranslation)}</MenuItem>

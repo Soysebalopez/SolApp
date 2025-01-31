@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-  };
-  module.exports = nextConfig;
+    swcMinify: true,
+    compiler: {
+        emotion: true,
+    },
+};
+module.exports = nextConfig;

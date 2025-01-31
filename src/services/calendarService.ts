@@ -15,7 +15,7 @@ import { AppError, handleError } from '@/utils/errorHandler';
 export type EventType = 'visit' | 'consultation' | 'followup' | 'other';
 export type EventStatus = 'scheduled' | 'completed' | 'cancelled';
 
-export interface CalendarEvent extends Omit<EventInput, 'backgroundColor' | 'borderColor'> {
+export interface CalendarEvent {
   id?: string;
   title: string;
   start: Date;
@@ -53,9 +53,19 @@ export const EVENT_COLORS = {
   },
 } as const;
 
+const convertToDate = (date: Date | { toDate: () => Date } | string | number): Date => {
+  if (date instanceof Date) return date;
+  if (typeof date === 'object' && 'toDate' in date) return date.toDate();
+  return new Date(date);
+};
+
 export const calendarService = {
   async createEvent(event: Omit<CalendarEvent, 'id' | 'createdAt' | 'updatedAt'>) {
     try {
+      if (!event.title || !event.start || !event.patientId) {
+        throw new Error('Missing required fields');
+      }
+
       const eventData = {
         ...event,
         createdAt: new Date(),
@@ -65,6 +75,7 @@ export const calendarService = {
       const docRef = await addDoc(collection(db, 'events'), eventData);
       return { ...eventData, id: docRef.id };
     } catch (error) {
+      console.error('Error creating event:', error);
       throw handleError(error);
     }
   },
@@ -99,11 +110,19 @@ export const calendarService = {
         where('patientId', '==', patientId)
       );
       const snapshot = await getDocs(eventsQuery);
-      return snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as CalendarEvent[];
+      return snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          ...data,
+          id: doc.id,
+          start: convertToDate(data.start),
+          end: data.end ? convertToDate(data.end) : undefined,
+          createdAt: convertToDate(data.createdAt),
+          updatedAt: convertToDate(data.updatedAt),
+        } as CalendarEvent;
+      });
     } catch (error) {
+      console.error('Error getting events:', error);
       throw handleError(error);
     }
   },

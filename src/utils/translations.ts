@@ -153,6 +153,10 @@ export const translations = {
       completed: 'Completado',
       cancelled: 'Cancelado',
     },
+    loadEventsError: 'Error al cargar los eventos',
+    eventDateRequired: 'La fecha del evento es requerida',
+    eventTitleRequired: 'El título del evento es requerido',
+    deleteConfirmation: '¿Está seguro que desea eliminar este evento?',
   },
 };
 

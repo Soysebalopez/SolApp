@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { 
   Dialog, 
   DialogTitle, 
@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import type { EventInput } from '@fullcalendar/core';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useNotifications } from '@/hooks/useNotifications';
 import type { Patient } from '@/types/patient';
@@ -26,18 +25,18 @@ interface AddEventDialogProps {
   onClose: () => void;
   selectedDate: Date | null;
   patient: Patient;
-  onEventAdded: (event: EventInput) => void;
+  onEventAdded: (event: Omit<CalendarEvent, 'id' | 'createdAt' | 'updatedAt'>) => void;
 }
 
 type CalendarTranslation = Extract<TranslationKey, `calendar.${string}`>;
 
-const AddEventDialog = ({
+const AddEventDialog: React.FC<AddEventDialogProps> = ({
   open,
   onClose,
   selectedDate,
   patient,
   onEventAdded,
-}: AddEventDialogProps) => {
+}) => {
   const { t } = useTranslations();
   const { showError, showSuccess } = useNotifications();
   const [title, setTitle] = useState('');
@@ -46,9 +45,26 @@ const AddEventDialog = ({
   const [status, setStatus] = useState<EventStatus>('scheduled');
   const [description, setDescription] = useState('');
 
+  useEffect(() => {
+    if (!open) {
+      setTitle('');
+      setStart(selectedDate);
+      setType('visit');
+      setStatus('scheduled');
+      setDescription('');
+    }
+  }, [open, selectedDate]);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!start) return;
+    if (!start) {
+      showError('calendar.eventDateRequired' as CalendarTranslation);
+      return;
+    }
+    if (!title.trim()) {
+      showError('calendar.eventTitleRequired' as CalendarTranslation);
+      return;
+    }
 
     try {
       const newEvent: Omit<CalendarEvent, 'id' | 'createdAt' | 'updatedAt'> = {

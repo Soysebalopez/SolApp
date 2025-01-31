@@ -3,24 +3,24 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Box, useTheme } from '@mui/material';
-import type { EventInput, DateSelectArg, EventClickArg } from '@fullcalendar/core';
+import { Box, useTheme, CircularProgress } from '@mui/material';
+import type { DateSelectArg, EventClickArg } from '@fullcalendar/core';
 import { useTranslations } from '@/hooks/useTranslations';
 import { useNotifications } from '@/hooks/useNotifications';
 import AddEventDialog from './AddEventDialog';
+import EditEventDialog from './EditEventDialog';
 import type { Patient } from '@/types/patient';
 import type { TranslationKey } from '@/utils/translations';
 import { calendarService, type CalendarEvent, EVENT_COLORS } from '@/services/calendarService';
-import EditEventDialog from './EditEventDialog';
 
 interface CalendarProps {
   patient: Patient;
-  onEventAdded: (event: EventInput) => void;
+  onEventAdded: (event: CalendarEvent) => void;
 }
 
 type CalendarTranslation = Extract<TranslationKey, `calendar.${string}`>;
 
-export const Calendar = ({ patient, onEventAdded }: CalendarProps) => {
+export const Calendar: React.FC<CalendarProps> = ({ patient, onEventAdded }) => {
   const theme = useTheme();
   const { t } = useTranslations();
   const { showError, showSuccess } = useNotifications();
@@ -29,30 +29,53 @@ export const Calendar = ({ patient, onEventAdded }: CalendarProps) => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [isEditEventOpen, setIsEditEventOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadEvents = useCallback(async () => {
+    setIsLoading(true);
     try {
       const patientEvents = await calendarService.getPatientEvents(patient.id!);
       setEvents(patientEvents);
     } catch (error) {
+      console.error('Error loading events:', error);
       showError('calendar.loadEventsError' as CalendarTranslation);
+    } finally {
+      setIsLoading(false);
     }
   }, [patient.id, showError]);
 
   useEffect(() => {
-    loadEvents();
-  }, [loadEvents]);
+    let mounted = true;
+    
+    const fetchEvents = async () => {
+      try {
+        const patientEvents = await calendarService.getPatientEvents(patient.id!);
+        if (mounted) {
+          setEvents(patientEvents);
+        }
+      } catch (error) {
+        if (mounted) {
+          console.error('Error loading events:', error);
+          showError('calendar.loadEventsError' as CalendarTranslation);
+        }
+      }
+    };
 
-  const handleEventAdded = async (event: EventInput) => {
+    fetchEvents();
+    
+    return () => {
+      mounted = false;
+    };
+  }, [patient.id, showError]);
+
+  const handleEventAdded = async (event: Omit<CalendarEvent, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      const newEvent = await calendarService.createEvent({
-        ...event,
-        patientId: patient.id!,
-      });
+      const newEvent = await calendarService.createEvent(event);
       setEvents(prev => [...prev, newEvent]);
       onEventAdded(newEvent);
       showSuccess('calendar.eventAdded' as CalendarTranslation);
     } catch (error) {
+      console.error('Error adding event:', error);
       showError('calendar.addEventError' as CalendarTranslation);
     }
   };
@@ -78,6 +101,7 @@ export const Calendar = ({ patient, onEventAdded }: CalendarProps) => {
       ));
       showSuccess('calendar.eventUpdated' as CalendarTranslation);
     } catch (error) {
+      console.error('Error updating event:', error);
       showError('calendar.updateEventError' as CalendarTranslation);
     }
   };
@@ -88,6 +112,7 @@ export const Calendar = ({ patient, onEventAdded }: CalendarProps) => {
       setEvents(prev => prev.filter(event => event.id !== eventId));
       showSuccess('calendar.eventDeleted' as CalendarTranslation);
     } catch (error) {
+      console.error('Error deleting event:', error);
       showError('calendar.deleteEventError' as CalendarTranslation);
     }
   };
@@ -101,7 +126,23 @@ export const Calendar = ({ patient, onEventAdded }: CalendarProps) => {
   }, []);
 
   return (
-    <Box sx={{ height: 600, mt: 2 }}>
+    <Box sx={{ height: 600, mt: 2, position: 'relative' }}>
+      {isLoading && (
+        <Box sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          zIndex: 1,
+        }}>
+          <CircularProgress />
+        </Box>
+      )}
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         headerToolbar={{

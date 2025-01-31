@@ -12,7 +12,7 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import type { EventInput } from '@fullcalendar/core';
 import { useTranslations } from '@/hooks/useTranslations';
@@ -93,7 +93,7 @@ const AddEventDialog = ({
               <Select
                 value={type}
                 label={t('calendar.eventType' as CalendarTranslation)}
-                onChange={(event: SelectChangeEvent) => {
+                onChange={(event: SelectChangeEvent<string>) => {
                   setType(event.target.value as EventType);
                 }}
               >
@@ -108,7 +108,7 @@ const AddEventDialog = ({
               <Select
                 value={status}
                 label={t('calendar.eventStatus' as CalendarTranslation)}
-                onChange={(event: SelectChangeEvent) => {
+                onChange={(event: SelectChangeEvent<string>) => {
                   setStatus(event.target.value as EventStatus);
                 }}
               >

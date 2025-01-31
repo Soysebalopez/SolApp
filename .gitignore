@@ -1,1 +1,8 @@
-node_modules
+# Ignorar archivos ocultos de macOS y sistema
+._*
+.DS_Store
+
+# Ignorar archivos de caché de Next.js
+.next/
+node_modules/
+package-lock.json

@@ -93,9 +93,8 @@ const AddEventDialog = ({
               <Select
                 value={type}
                 label={t('calendar.eventType' as CalendarTranslation)}
-                onChange={(event) => {
-                  const e = event as SelectChangeEvent;
-                  setType(e.target.value as EventType);
+                onChange={(event: SelectChangeEvent) => {
+                  setType(event.target.value as EventType);
                 }}
               >
                 <MenuItem value="visit">{t('calendar.eventTypes.visit' as CalendarTranslation)}</MenuItem>
@@ -109,9 +108,8 @@ const AddEventDialog = ({
               <Select
                 value={status}
                 label={t('calendar.eventStatus' as CalendarTranslation)}
-                onChange={(event) => {
-                  const e = event as SelectChangeEvent;
-                  setStatus(e.target.value as EventStatus);
+                onChange={(event: SelectChangeEvent) => {
+                  setStatus(event.target.value as EventStatus);
                 }}
               >
                 <MenuItem value="scheduled">{t('calendar.eventStatuses.scheduled' as CalendarTranslation)}</MenuItem>

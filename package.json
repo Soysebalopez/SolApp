@@ -1,5 +1,5 @@
 {
-  "name": "SolApp",
+  "name": "solapp-nextjs",
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
@@ -9,6 +9,8 @@
   "dependencies": {
     "next": "^14.0.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "axios": "^1.4.0",
+    "firebase": "^10.7.0"
   }
 }

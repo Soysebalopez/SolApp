@@ -1,3 +1,10 @@
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+
 export default function Home() {
-    return <h1>Bienvenido a la app de la nutricionista</h1>;
-  }
+  const router = useRouter();
+  useEffect(() => {
+    router.push('/dashboard');
+  }, []);
+  return <p>Redirigiendo...</p>;
+}
